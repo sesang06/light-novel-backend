@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('author', {
         name: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING(512),
             allowNull: false
         }
     }, {
