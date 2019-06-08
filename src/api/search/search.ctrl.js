@@ -10,9 +10,17 @@ const url = 'http://localhost:9200/test-migrate/_search'
 
 const fetch = async (query) => {
     try {
-        const response = await axios.get(url, {
-            params: {
-                q: "title:" + query
+        const response = await axios.post(url, {
+            query : {
+                multi_match: {
+                    fields: [ 
+                        "title",
+                        "description", 
+                        "author.name", 
+                        "publisher.name" 
+                    ],
+                    query: query
+                }
             }
         })
         const data = response.data
@@ -30,9 +38,14 @@ const getLightNovelInfo = (result) => {
     delete result._id
     delete result._score
     const source = result._source
+    delete source["@timestamp"]
+    delete source["@version"]
     const data = fromJS(source)
     
-    return  data.appendAuthorInfo().toJS()
+    return data
+    .appendAuthorInfo()
+    .appendPublisherInfo()
+    .toJS()
   
 }
 
@@ -48,11 +61,6 @@ Map.prototype.appendAuthorInfo = function() {
     created_at: created_at,
     updated_at: updated_at })
 
-    // delete lightNovel["author.id"]
-    // delete lightNovel["author.name"] 
-    // delete lightNovel["author.created_at"]
-    // delete lightNovel["author.updated_at"]
-
     return this
         .delete("author.id")
         .delete("author.name")
@@ -60,43 +68,43 @@ Map.prototype.appendAuthorInfo = function() {
         .delete("author.updated_at")
         .set("author", author)
 };
+
+Map.prototype.appendPublisherInfo = function() {
+    const id = this.get("publisher.id")
+    const name = this.get("publisher.name")
+    const created_at = this.get("publisher.created_at")
+    const updated_at = this.get("publisher.updated_at")
+
+    const publisher = Map({
+        id: id,
+    name: name,
+    created_at: created_at,
+    updated_at: updated_at })
+
+    return this
+        .delete("publisher.id")
+        .delete("publisher.name")
+        .delete("publisher.created_at")
+        .delete("publisher.updated_at")
+        .set("publisher", publisher)
+};
+
+
+
 exports.list = async (ctx) => {
     try {
-        // const Op = Sequelize.Op
-        // const lastId = parseInt(ctx.query.last_id || 0, 10);
-        // const query = ctx.query.query;
-        // const limit = 10;
-        // const list = await LightNovel.findAll({
-        //     attributes: { exclude: ['hit_rank', 'link', 'isbn', 'isbn13', 'aladin_id', 'adult', 'sales_point', 'sales_price', 'standard_price'] },
-        //     include: [Author, Publisher, Category],
-        //     where: {
-        //         id: {
-        //             [Op.gt]: lastId
-        //         },
-        //         title: {
-        //             [Op.substring]: query
-        //         }
-        //     },
-        //     order: [
-        //         ['publication_date', 'DESC']
-        //     ],
-        //     limit: limit + 1
-        // });
-        // var is_last_page = true;
-        // const length = list.length;
-        // if (length == limit + 1) {
-        //     is_last_page = false;
-        //     list.pop()
-        // } 
-        // const body = {
-        //     code: 200,
-        //     message: "Success",
-        //     data: {
-        //         list: list,
-        //         is_last_page: is_last_page
-        //     }
-        // }
-        body = await fetch('여동생')
+        const lastId = parseInt(ctx.query.last_id || 0, 10);
+        const query = ctx.query.query;
+        const limit = 10;
+        const list = await fetch(query)
+        const body = {
+            code: 200,
+            message: "Success",
+            data: {
+                list: list,
+                is_last_page: false
+            }
+        }
         ctx.body = body;
     } catch (e) {
         console.log(e);
