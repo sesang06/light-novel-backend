@@ -26,7 +26,7 @@ const fetch = async (query) => {
         const data = response.data
         const results = data.hits.hits
         const lightNovelInfos = results.map(getLightNovelInfo)
-        return JSON.stringify(lightNovelInfos)
+        return lightNovelInfos
     } catch (e) {
         console.log(e);
     }
