@@ -6,7 +6,7 @@ const { Map, fromJS, toJS } = require('immutable');
 var options = {
     host: 'htt'
 }
-const url = 'http://localhost:9200/test-migrate/_search'
+const url = 'http://localhost:9200/light_novel/_search'
 
 const fetch = async (query) => {
     try {
