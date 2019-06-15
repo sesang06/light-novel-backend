@@ -14,6 +14,7 @@ db.LightNovel = require('./light_novel')(sequelize, Sequelize);
 db.Author = require('./author')(sequelize, Sequelize);
 db.Publisher = require('./publisher')(sequelize, Sequelize);
 db.Category = require('./category')(sequelize, Sequelize);
+db.LightNovelSeries = require('./light_novel_series')(sequelize, Sequelize);
 
 db.Author.hasMany(db.LightNovel, { foreignKey: 'author_id', sourceKey: 'id' });
 db.LightNovel.belongsTo(db.Author, { foreignKey: 'author_id', targetKey: 'id' });
