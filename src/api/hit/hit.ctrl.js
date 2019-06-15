@@ -3,15 +3,12 @@ var Sequelize = require('sequelize')
 exports.list = async (ctx) => {
     try {
         const Op = Sequelize.Op
-        const lastId = parseInt(ctx.query.last_id || 0, 10);
+        const offset = parseInt(ctx.query.offset || 0, 10);
         const limit = 10;
         const list = await LightNovel.findAll({
             attributes: { exclude: ['recommend_rank', 'link', 'isbn', 'isbn13', 'aladin_id', 'adult', 'sales_point', 'sales_price', 'standard_price'] },
             include: [Author, Publisher, Category],
             where: {
-                id: {
-                    [Op.gt]: lastId
-                },
                 hit_rank: {
                     [Op.ne]: 0
                 }
@@ -19,7 +16,8 @@ exports.list = async (ctx) => {
             order: [
                 ['hit_rank', 'ASC']
             ],
-            limit: limit + 1
+            limit: limit + 1,
+            offset: offset
         });
         var is_last_page = true;
         const length = list.length;

@@ -42,6 +42,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        series_aladin_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+        },
         adult: {
             type: DataTypes.BOOLEAN,
             allowNull: false
