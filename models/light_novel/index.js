@@ -62,6 +62,14 @@ module.exports = (sequelize, DataTypes) => {
         standard_price: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        publisher_description: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        index_description: {
+            type: DataTypes.TEXT,
+            allowNull: false
         }
     }, {
             underscored: true
