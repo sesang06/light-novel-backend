@@ -6,7 +6,7 @@ exports.list = async (ctx) => {
         const offset = parseInt(ctx.query.offset || 0, 10);
         const limit = 10;
         const list = await LightNovel.findAll({
-            attributes: { exclude: ['recommend_rank', 'link', 'isbn', 'isbn13', 'aladin_id', 'adult', 'sales_point', 'sales_price', 'standard_price'] },
+            attributes: { exclude: ['recommend_rank', 'link', 'isbn', 'isbn13', 'aladin_id', 'adult', 'sales_point', 'sales_price', 'standard_price', 'index_description', 'publisher_description'] },
             include: [Author, Publisher, Category],
             order: [
                 ['publication_date', 'DESC']
