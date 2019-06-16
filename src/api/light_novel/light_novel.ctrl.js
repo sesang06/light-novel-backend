@@ -1,4 +1,4 @@
-const { LightNovel, Author, Publisher, Category } = require('../../../models');
+const { LightNovel, Author, Publisher, Category, LightNovelSeries } = require('../../../models');
 var Sequelize = require('sequelize')
 exports.list = async (ctx) => {
     try {
@@ -11,11 +11,9 @@ exports.list = async (ctx) => {
                 id: id
             }
         });
-
-        console.log(lightNovel["series_aladin_id"])
         series_aladin_id = lightNovel["series_aladin_id"]
         if (series_aladin_id == 0) {
-            lightNovel.setDataValue("series", [])
+            lightNovel.setDataValue("series", {})
         } else {
             const seriesLightNovels = await LightNovel.findAll({
                 // attributes: { exclude: ['recommen] },
@@ -27,8 +25,13 @@ exports.list = async (ctx) => {
                     series_aladin_id : series_aladin_id
                 }
             });
-            console.log(seriesLightNovels)
-            lightNovel.setDataValue("series", seriesLightNovels)
+            const series = await LightNovelSeries.findOne({
+                where: {
+                    aladin_id : series_aladin_id
+                }
+            })
+            series.setDataValue("light_novels", seriesLightNovels)
+            lightNovel.setDataValue("series", series)
         }
         const body = {
             code: 200,

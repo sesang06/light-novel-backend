@@ -8,11 +8,6 @@ exports.list = async (ctx) => {
         const list = await LightNovel.findAll({
             attributes: { exclude: ['recommend_rank', 'link', 'isbn', 'isbn13', 'aladin_id', 'adult', 'sales_point', 'sales_price', 'standard_price'] },
             include: [Author, Publisher, Category],
-            where: {
-                hit_rank: {
-                    [Op.ne]: 0
-                }
-            },
             order: [
                 ['publication_date', 'DESC']
             ],
