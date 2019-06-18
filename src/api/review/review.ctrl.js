@@ -1,19 +1,18 @@
-
-const { Topic, Review } = require('../../../models');
+const { Review, LightNovel } = require('../../../models');
 var Sequelize = require('sequelize')
 
 exports.read = async (ctx) => {
     const { id } = ctx.params;
     try {
-        const topic = await Topic.findOne({
+        const review = await Review.findOne({
             include: [
-                Review,
+                LightNovel,
             ],
             where: {
                 id: id
             },
         })
-        if (!topic) {
+        if (!review) {
             
             const body = {
                 code: 404,
@@ -25,7 +24,7 @@ exports.read = async (ctx) => {
         const body = {
             code: 404,
             data: {
-                topic: topic
+                review: review
             }
         }
         ctx.body = body;   
@@ -39,9 +38,9 @@ exports.list = async (ctx) => {
     try {
         const Op = Sequelize.Op 
     
-        const topic_list = await Topic.findAll({
+        const review_list = await Review.findAll({
                 include: [
-                    Review,
+                    LightNovel,
                 ],
                 where: {
                     visible: 1
@@ -56,7 +55,7 @@ exports.list = async (ctx) => {
             code: 200,
             message: "Success",
             data: {
-                topic_list: topic_list
+                review_list: review_list
             }
         }
         ctx.body = body;
@@ -66,18 +65,22 @@ exports.list = async (ctx) => {
 }
 
 /* POST /api/topic
-    { title, thumbnail }
+    { title, description, light_novel_id }
 */
 exports.write = async (ctx) => {
-    const { title, thumbnail } = ctx.request.body;
+    console.log(ctx.request);
+    const { title, description, light_novel_id } = ctx.request.body;
     try {
-        const topic = Topic.create({
+        const review = Review.create({
             title: title,
-            thumbnail: thumbnail,
+            description: description,
+            light_novel_id: light_novel_id,
             visible: true,
             order: 0
+        }, {
+            include: LightNovel
         })
-        if (!topic) {
+        if (!review) {
             
             const body = {
                 code: 404,
@@ -89,7 +92,7 @@ exports.write = async (ctx) => {
         const body = {
             code: 404,
             data: {
-                topic: topic
+                review: review
             }
         }
         ctx.body = body;  

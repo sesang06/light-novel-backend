@@ -1,10 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('topic', {
+    return sequelize.define('collection', {
         title: {
             type: DataTypes.STRING(512),
             allowNull: false
         },
-        thumbnail: {
+        description: {
             type: DataTypes.STRING(512),
             allowNull: false
         },

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('recommend', {
+    return sequelize.define('review', {
         title: {
             type: DataTypes.STRING(512),
             allowNull: false

@@ -2,13 +2,8 @@ const Router = require('koa-router');
 
 const lightNovel = new Router();
 const lightNovelCtrl = require('./light_novel.ctrl');
-const LightNovel = require('../../../models').LightNovel;
 
-const printInfo = (ctx) => {
-    ctx.body = {
-        method: ctx.method
-    };
-};
 lightNovel.get('/', lightNovelCtrl.list);
+lightNovel.get('/:id', lightNovelCtrl.read);
 
 module.exports = lightNovel;

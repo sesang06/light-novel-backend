@@ -6,6 +6,9 @@ const searchRouter = require('./search');
 const lightNovelRouter = require('./light_novel');
 const featuredRouter = require('./featured');
 const topicRouter = require('./topic');
+const reviewRouter = require('./review');
+const monthRouter = require('./month');
+const collectionRouter = require('./collection');
 const api = new Router();
 
 api.use('/hit', hot.routes());
@@ -15,4 +18,7 @@ api.use('/search', searchRouter.routes());
 api.use('/light_novel', lightNovelRouter.routes());
 api.use('/featured', featuredRouter.routes());
 api.use('/topic', topicRouter.routes());
+api.use('/review', reviewRouter.routes());
+api.use('/month', monthRouter.routes());
+api.use('/collection', collectionRouter.routes());
 module.exports = api;
