@@ -1,8 +1,9 @@
 const Router = require('koa-router');
 
-const recent = new Router();
-const recentCtrl = require('./recent.ctrl');
+const topic = new Router();
+const topicCtrl = require('./topic.ctrl');
 
-recent.get('/', recentCtrl.list);
-
-module.exports = recent;
+topic.get('/', topicCtrl.list);
+topic.get('/:id', topicCtrl.read);
+topic.post('/', topicCtrl.write);
+module.exports = topic;

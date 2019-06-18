@@ -31,6 +31,9 @@ db.LightNovel.belongsToMany(db.Category, { through: 'LightNovelCategory' });
 db.LightNovel.belongsToMany(db.Recommend, { through: db.LightNovelRecommend});
 db.Recommend.belongsToMany(db.LightNovel, { through: db.LightNovelRecommend});
 
-db.Topic.belongsTo(db.LightNovel);
+db.Topic.belongsTo(db.LightNovel, { foreignKey: {
+    name: 'light_novel_id',
+    allowNull: false,
+}, targetKey: 'id' });
 
 module.exports = db;
