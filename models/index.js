@@ -17,6 +17,7 @@ db.Category = require('./category')(sequelize, Sequelize);
 db.LightNovelSeries = require('./light_novel_series')(sequelize, Sequelize);
 db.Recommend = require('./recommend')(sequelize, Sequelize);
 db.LightNovelRecommend = require('./light_novel_recommend')(sequelize, Sequelize);
+db.Topic = require('./topic')(sequelize, Sequelize);
 
 db.Author.hasMany(db.LightNovel, { foreignKey: 'author_id', sourceKey: 'id' });
 db.LightNovel.belongsTo(db.Author, { foreignKey: 'author_id', targetKey: 'id' });
@@ -29,4 +30,7 @@ db.LightNovel.belongsToMany(db.Category, { through: 'LightNovelCategory' });
 
 db.LightNovel.belongsToMany(db.Recommend, { through: db.LightNovelRecommend});
 db.Recommend.belongsToMany(db.LightNovel, { through: db.LightNovelRecommend});
+
+db.Topic.belongsTo(db.LightNovel);
+
 module.exports = db;
