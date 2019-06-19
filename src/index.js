@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const Router = require('koa-router');
+const bodyParser = require('koa-bodyparser');
 const api = require('./api');
 
 var sequelize = require('../models').sequelize;
@@ -9,6 +10,7 @@ const router = new Router();
 sequelize.sync();
 router.use('/api', api.routes());
 
+app.use(bodyParser());
 app.use(router.routes()).use(router.allowedMethods());
 app.use((ctx) => {
     ctx.body = 'hello world';
