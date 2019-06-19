@@ -8,9 +8,11 @@ var options = {
 }
 const url = 'http://localhost:9200/light_novel/_search'
 
-const fetch = async (query) => {
+const fetch = async (query, offset, limit) => {
     try {
         const response = await axios.post(url, {
+            from: offset,
+            size: limit,
             query : {
                 multi_match: {
                     fields: [ 
@@ -93,10 +95,18 @@ Map.prototype.appendPublisherInfo = function() {
 
 exports.list = async (ctx) => {
     try {
-        const lastId = parseInt(ctx.query.last_id || 0, 10);
         const query = ctx.query.query;
+        const offset = parseInt(ctx.query.offset || 0, 10);
         const limit = 10;
-        const list = await fetch(query)
+       
+        const list = await fetch(query, offset, limit);
+
+        var is_last_page = true;
+        const length = list.length;
+        if (length == limit + 1) {
+            is_last_page = false;
+            list.pop();
+        } 
         const body = {
             code: 200,
             message: "Success",
