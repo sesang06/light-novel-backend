@@ -3,6 +3,7 @@
 # Edit at https://www.gitignore.io/?templates=node,webstorm
 
 config.json
+config/firebase.json
 ### Node ###
 # Logs
 logs
