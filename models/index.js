@@ -19,6 +19,8 @@ db.Collection = require('./collection')(sequelize, Sequelize);
 db.LightNovelCollection = require('./light_novel_collection')(sequelize, Sequelize);
 db.Review = require('./review')(sequelize, Sequelize);
 db.Topic = require('./topic')(sequelize, Sequelize);
+db.User = require('./user')(sequelize, Sequelize);
+db.TokenInfo = require('./token_info')(sequelize, Sequelize);
 
 db.Author.hasMany(db.LightNovel, { foreignKey: 'author_id', sourceKey: 'id' });
 db.LightNovel.belongsTo(db.Author, { foreignKey: 'author_id', targetKey: 'id' });
@@ -49,5 +51,14 @@ db.Review.belongsTo(db.Review, { foreignKey : {
     name: 'topic_id',
     allowNull: true
 }, targetKey: 'id'});
+
+db.TokenInfo.belongsTo(db.User, { foreignKey : {
+    name: 'user_id',
+    allowNull: true
+}, targetKey: 'id'});
+db.User.hasMany(db.TokenInfo, { foreignKey : {
+    name: 'user_id',
+    allowNull: true
+}, sourceKey: 'id'});
 
 module.exports = db;
