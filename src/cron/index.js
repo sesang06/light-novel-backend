@@ -4,6 +4,29 @@ const { LightNovel } = require('../../models');
 const Sequelize = require('sequelize')
 const admin = require('firebase-admin');
 
+const testCrontabs = async () => {
+    const topic = 'dailyReport';
+    const fcm_message = {
+        data: {
+            title: "테스트",
+            message: "합니다",
+            detail_message: "아잉",
+            type: "h"
+        },
+        topic: topic
+    };
+
+    // Send a message to devices subscribed to the provided topic.
+    admin.messaging().send(fcm_message)
+        .then((response) => {
+            // Response is a message ID string.
+            console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+            console.log('Error sending message:', error);
+        });
+}
+
 const notifiyNewlyPublishedBooks = async () => {
     const seoul = moment().tz('Asia/Seoul');
     const today = seoul.format('YYYY-MM-DD')
@@ -62,3 +85,4 @@ const notifiyNewlyPublishedBooks = async () => {
 }
 
 exports.notifiyNewlyPublishedBooks = notifiyNewlyPublishedBooks
+exports.testCrontabs = testCrontabs

@@ -22,6 +22,15 @@ sequelize.sync();
 router.use('/api', api.routes());
 
 cron.schedule("0 10 * * *", cronTabJobs.notifiyNewlyPublishedBooks);
+
+cron.schedule("15 22 * * *", cronTabJobs.testCrontabs);
+cron.schedule("14 22 * * *", cronTabJobs.testCrontabs);
+cron.schedule("13 22 * * *", cronTabJobs.testCrontabs);
+cron.schedule("12 22 * * *", cronTabJobs.testCrontabs);
+cron.schedule("11 22 * * *", cronTabJobs.testCrontabs);
+cron.schedule("10 22 * * *", cronTabJobs.testCrontabs);
+cron.schedule("9 22 * * *", cronTabJobs.testCrontabs);
+cron.schedule("8 22 * * *", cronTabJobs.testCrontabs);
 app.use(bodyParser());
 app.use(router.routes()).use(router.allowedMethods());
 app.use((ctx) => {
