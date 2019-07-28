@@ -10,6 +10,7 @@ const reviewRouter = require('./review');
 const monthRouter = require('./month');
 const collectionRouter = require('./collection');
 const tokenInfoRouter = require('./token_info');
+const comicRouter = require('./comic');
 const api = new Router();
 
 api.use('/hit', hot.routes());
@@ -23,4 +24,5 @@ api.use('/review', reviewRouter.routes());
 api.use('/month', monthRouter.routes());
 api.use('/collection', collectionRouter.routes());
 api.use('/token_info', tokenInfoRouter.routes());
+api.use('/comic', comicRouter.routes());
 module.exports = api;
