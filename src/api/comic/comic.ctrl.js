@@ -56,8 +56,8 @@ exports.list = async (ctx) => {
         switch (orderQuery) {
             case 'new':
                 order = [
-                        ['publication_date', 'ASC']
-                    ];
+                    ['publication_date', 'DESC']
+                ];
                 break;
             case 'hit':
                 order = [ 
