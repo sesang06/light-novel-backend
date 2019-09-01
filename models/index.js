@@ -43,6 +43,9 @@ db.LightNovel.belongsToMany(db.Category, { through: 'LightNovelCategory' });
 db.LightNovel.belongsToMany(db.Collection, { through: db.LightNovelCollection});
 db.Collection.belongsToMany(db.LightNovel, { through: db.LightNovelCollection});
 
+db.LightNovelSeries.hasMany(db.LightNovel, { foreignKey: 'series_aladin_id', sourceKey: 'aladin_id' })
+db.LightNovel.belongsTo(db.LightNovelSeries, { foreignKey: 'series_aladin_id', targetKey: 'aladin_id' })
+
 db.LightNovel.hasMany(db.Review, { foreignKey: {
     name: 'light_novel_id',
     allowNull: false,

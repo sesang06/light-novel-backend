@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         aladin_id: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        last_publication_date: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
             underscored: true
