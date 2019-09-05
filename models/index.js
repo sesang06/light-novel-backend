@@ -23,6 +23,7 @@ db.Review = require('./review')(sequelize, Sequelize);
 db.Topic = require('./topic')(sequelize, Sequelize);
 db.User = require('./user')(sequelize, Sequelize);
 db.TokenInfo = require('./token_info')(sequelize, Sequelize);
+db.Category = require('./category')(sequelize, Sequelize);
 
 db.Author.hasMany(db.LightNovel, { foreignKey: 'author_id', sourceKey: 'id' });
 db.LightNovel.belongsTo(db.Author, { foreignKey: 'author_id', targetKey: 'id' });
@@ -37,8 +38,8 @@ db.Publisher.hasMany(db.Comic, { foreignKey: 'publisher_id', sourceKey: 'id' });
 db.Comic.belongsTo(db.Publisher, { foreignKey: 'publisher_id', targetKey: 'id' });
 
 
-db.Category.belongsToMany(db.LightNovel, { through: 'LightNovelCategory' });
-db.LightNovel.belongsToMany(db.Category, { through: 'LightNovelCategory' });
+db.Category.belongsToMany(db.LightNovelSeries, { through: 'light_novel_series_category', foreignKey: 'category_id', as: 'light_novel_series_id' });
+db.LightNovelSeries.belongsToMany(db.Category, { through: 'light_novel_series_category', foreignKey: 'light_novel_series_id', as: 'category_id' });
 
 db.LightNovel.belongsToMany(db.Collection, { through: db.LightNovelCollection});
 db.Collection.belongsToMany(db.LightNovel, { through: db.LightNovelCollection});

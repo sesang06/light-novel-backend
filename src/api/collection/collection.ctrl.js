@@ -1,4 +1,4 @@
-const { LightNovel, Author, Publisher, Category, LightNovelCollection, Collection } = require('../../../models');
+const { LightNovel, Author, Publisher, LightNovelCollection, Collection } = require('../../../models');
 var Sequelize = require('sequelize')
 exports.list = async (ctx) => {
     try {

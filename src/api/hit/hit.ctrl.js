@@ -1,4 +1,4 @@
-const { LightNovel, Author, Publisher, Category } = require('../../../models');
+const { LightNovel, Author, Publisher } = require('../../../models');
 var Sequelize = require('sequelize')
 exports.list = async (ctx) => {
     try {
@@ -7,7 +7,7 @@ exports.list = async (ctx) => {
         const limit = 10;
         const list = await LightNovel.findAll({
             attributes: { exclude: ['recommend_rank', 'link', 'isbn', 'isbn13', 'aladin_id', 'adult', 'sales_point', 'sales_price', 'standard_price', 'index_description', 'publisher_description'] },
-            include: [Author, Publisher, Category],
+            include: [Author, Publisher],
             where: {
                 hit_rank: {
                     [Op.ne]: 0

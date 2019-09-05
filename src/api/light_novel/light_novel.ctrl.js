@@ -1,4 +1,4 @@
-const { LightNovel, Author, Publisher, Category, LightNovelSeries } = require('../../../models');
+const { LightNovel, Author, Publisher, LightNovelSeries } = require('../../../models');
 var Sequelize = require('sequelize')
 
 exports.read = async (ctx) => {
@@ -6,7 +6,7 @@ exports.read = async (ctx) => {
     try {
         const Op = Sequelize.Op
         const lightNovel = await LightNovel.findOne({
-            include: [Author, Publisher, Category],
+            include: [Author, Publisher],
             where: {
                 id: id
             }
@@ -16,8 +16,7 @@ exports.read = async (ctx) => {
             lightNovel.setDataValue("series", {})
         } else {
             const seriesLightNovels = await LightNovel.findAll({
-                // attributes: { exclude: ['recommen] },
-                include: [Author, Publisher, Category],
+                include: [Author, Publisher],
                 where: {
                     id: {
                         [Op.ne] :id
@@ -52,8 +51,7 @@ exports.list = async (ctx) => {
         const Op = Sequelize.Op
         const id = parseInt(ctx.query.id || 0, 10);
         const lightNovel = await LightNovel.findOne({
-            // attributes: { exclude: ['recommen] },
-            include: [Author, Publisher, Category],
+            include: [Author, Publisher],
             where: {
                 id: id
             }
@@ -63,8 +61,7 @@ exports.list = async (ctx) => {
             lightNovel.setDataValue("series", {})
         } else {
             const seriesLightNovels = await LightNovel.findAll({
-                // attributes: { exclude: ['recommen] },
-                include: [Author, Publisher, Category],
+                include: [Author, Publisher],
                 where: {
                     id: {
                         [Op.ne] :id
