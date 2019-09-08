@@ -1,4 +1,4 @@
-const { LightNovel, Author, Publisher, Category, LightNovelSeries, sequelize } = require('../../../models');
+const { LightNovel, Author, Publisher, Category, LightNovelSeries, LightNovelSeriesCategory, sequelize } = require('../../../models');
 var Sequelize = require('sequelize')
 
 const lightNovelSeriesDTO = (lightNovelSeries) => {
@@ -8,7 +8,7 @@ const lightNovelSeriesDTO = (lightNovelSeries) => {
         aladin_id: lightNovelSeries.aladin_id,
         created_at: lightNovelSeries.created_at,
         updated_at: lightNovelSeries.updated_at,
-        thumbnail: lightNovelSeries.light_novels[0].thumbnail
+        // thumbnail: lightNovelSeries.light_novels[0].thumbnail
     }
 }
 
@@ -21,17 +21,20 @@ exports.read = async (ctx) => {
                 id: id
             },
             include: [
-                {
-                    model: LightNovel,
-                    require: false,
-                    attributes: ['thumbnail'],
-                    limit: 1,
-                    order: [[
-                        'publication_date', 'DESC',
-                        'id', 'DESC'
-                    ]]
-                }
+                Category
             ]
+            // include: [
+            //     {
+            //         model: LightNovel,
+            //         require: false,
+            //         attributes: ['thumbnail'],
+            //         limit: 1,
+            //         order: [[
+            //             'publication_date', 'DESC',
+            //             'id', 'DESC'
+            //         ]]
+            //     }
+            // ]
         });
         const body = {
             code: 200,
