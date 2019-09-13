@@ -6,7 +6,6 @@ const categoryCtrl = require('./category.ctrl');
 category.get('/', categoryCtrl.list);
 category.get('/add', categoryCtrl.write);
 category.post('/add', categoryCtrl.write);
-category.get('/delete', categoryCtrl.delete);
 category.post('/delete', categoryCtrl.delete);
 
 

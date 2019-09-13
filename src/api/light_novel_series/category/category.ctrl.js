@@ -67,7 +67,7 @@ exports.writes = async (ctx) => {
     const { id } = ctx.params;
 
     try {
-        const titles = ctx.query.titles.split(',')
+        const titles = ctx.request.body.titles.split(',')
 
         const categories = await Category.findAll({
             where: {
@@ -140,7 +140,8 @@ exports.deletes = async (ctx) => {
     const { id } = ctx.params;
 
     try {
-        const titles = ctx.query.titles.split(',')
+        
+        const titles = ctx.request.body.titles.split(',')
 
         const categories = await Category.findAll({
             where: {
