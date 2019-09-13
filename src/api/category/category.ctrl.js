@@ -28,7 +28,7 @@ exports.list = async (ctx) => {
     try {
 
         const categories = await Category.findAll({
-         
+
         });
         const body = {
             code: 200,
@@ -45,7 +45,7 @@ exports.list = async (ctx) => {
 
 exports.write = async (ctx) => {
     try {
-        const title = ctx.query.title
+        const { title } = ctx.request.body
         const [category, created] = await Category.findOrCreate({
             where: {
                 title: title
@@ -66,8 +66,8 @@ exports.write = async (ctx) => {
 
 exports.delete = async (ctx) => {
     try {
-        const title = ctx.query.title
-        const [category, created] = await Category.destroy({
+        const { title } = ctx.request.body
+        await Category.destroy({
             where: {
                 title: title
             }
@@ -76,7 +76,6 @@ exports.delete = async (ctx) => {
             code: 200,
             message: "Success",
             data: {
-                category: category,
             }
         }
         ctx.body = body;
