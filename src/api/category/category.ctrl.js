@@ -27,9 +27,18 @@ exports.read = async (ctx) => {
 exports.list = async (ctx) => {
     try {
 
-        const categories = await Category.findAll({
+        const isDTO = ctx.query.view_type !== "detail";
 
+        var categories = await Category.findAll({
+            attributes: [
+                'id', 'title'
+            ]
         });
+        if (isDTO) {
+            categories = categories.map(category => {
+                return category.title
+            })
+        }
         const body = {
             code: 200,
             message: "Success",
