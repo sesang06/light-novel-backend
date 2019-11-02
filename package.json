@@ -14,7 +14,7 @@
     "moment-timezone": "^0.5.25",
     "mysql2": "^1.6.5",
     "node-cron": "^2.0.3",
-    "sequelize": "^5.8.6",
+    "sequelize": "^5.15.1",
     "sequelize-cli": "^5.4.0"
   },
   "devDependencies": {
