@@ -39,7 +39,7 @@ exports.read = async (ctx) => {
             }, {
                 model: LightNovel,
                 attributes: [
-                    'id', 'title'
+                    'id', 'title', 'thumbnail'
                 ]
             }
             ]
