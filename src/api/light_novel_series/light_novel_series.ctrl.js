@@ -1,11 +1,12 @@
 const { LightNovel, Author, Publisher, Category, LightNovelSeries, LightNovelSeriesCategory, sequelize } = require('../../../models');
 var Sequelize = require('sequelize')
 
-const lightNovelSeriesDTO = (lightNovelSeries) => {
+const lightNovelSeriesDTO = (lightNovelSeries, includeDescription) => {
     return {
         id: lightNovelSeries.id,
         title: lightNovelSeries.title,
         thumbnail: lightNovelSeries.get('thumbnail'),
+        description: includeDescription ? lightNovelSeries.get('description') : null,
         categories: lightNovelSeries.categories.map(category => {
             return category.title
         }),
@@ -29,7 +30,11 @@ exports.read = async (ctx) => {
                     'thumbnail'],
                 'id',
                 'title',
-                'last_publication_date'
+                'last_publication_date',
+                [sequelize.literal(
+                    "(SELECT `description` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `id` ASC LIMIT 1)"
+                ),
+                    'description'],
             ],
             include: [{
                 model: Category,
@@ -45,7 +50,7 @@ exports.read = async (ctx) => {
             ]
         });
         if (isDTO) {
-            lightNovelSeries = lightNovelSeriesDTO(lightNovelSeries);
+            lightNovelSeries = lightNovelSeriesDTO(lightNovelSeries, true);
         }
         const body = {
             code: 200,
@@ -174,7 +179,7 @@ exports.list = async (ctx) => {
             list.pop()
         }
         if (isDTO) {
-            list = list.map(series => lightNovelSeriesDTO(series));
+            list = list.map(series => lightNovelSeriesDTO(series, false));
         }
         const body = {
             code: 200,
