@@ -1,46 +1,62 @@
 const { LightNovel, Author, Publisher, Category, LightNovelSeries, LightNovelSeriesCategory, sequelize } = require('../../../models');
 var Sequelize = require('sequelize')
 
-const lightNovelSeriesDTO = (lightNovelSeries) => {
+const lightNovelSeriesDTO = (lightNovelSeries, includeDescription) => {
     return {
         id: lightNovelSeries.id,
         title: lightNovelSeries.title,
-        aladin_id: lightNovelSeries.aladin_id,
-        created_at: lightNovelSeries.created_at,
-        updated_at: lightNovelSeries.updated_at,
-        // thumbnail: lightNovelSeries.light_novels[0].thumbnail
+        thumbnail: lightNovelSeries.get('thumbnail'),
+        description: includeDescription ? lightNovelSeries.get('description') : null,
+        categories: lightNovelSeries.categories.map(category => {
+            return category.title
+        }),
+        light_novels: lightNovelSeries.light_novels
     }
 }
 
 exports.read = async (ctx) => {
     const { id } = ctx.params;
     try {
-        const Op = Sequelize.Op
-        const lightNovelSeries = await LightNovelSeries.findOne({
+
+        const isDTO = ctx.query.view_type !== "detail";
+        var lightNovelSeries = await LightNovelSeries.findOne({
             where: {
                 id: id
             },
-            include: [
-                Category
+            attributes: [
+                [sequelize.literal(
+                    "(SELECT `thumbnail` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `publication_date` DESC, `id` DESC LIMIT 1)"
+                ),
+                    'thumbnail'],
+                'id',
+                'title',
+                'last_publication_date',
+                [sequelize.literal(
+                    "(SELECT `description` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `id` ASC LIMIT 1)"
+                ),
+                    'description'],
+            ],
+            include: [{
+                model: Category,
+                attributes: [
+                    'id', 'title'
+                ]
+            }, {
+                model: LightNovel,
+                attributes: [
+                    'id', 'title', 'thumbnail'
+                ]
+            }
             ]
-            // include: [
-            //     {
-            //         model: LightNovel,
-            //         require: false,
-            //         attributes: ['thumbnail'],
-            //         limit: 1,
-            //         order: [[
-            //             'publication_date', 'DESC',
-            //             'id', 'DESC'
-            //         ]]
-            //     }
-            // ]
         });
+        if (isDTO) {
+            lightNovelSeries = lightNovelSeriesDTO(lightNovelSeries, true);
+        }
         const body = {
             code: 200,
             message: "Success",
             data: {
-                light_novel_series: lightNovelSeriesDTO(lightNovelSeries),
+                light_novel_series: lightNovelSeries
             }
         }
         ctx.body = body;
@@ -50,44 +66,120 @@ exports.read = async (ctx) => {
     }
 }
 
+
+const getAllList = async ({ limit, offset }) => {
+    const list = await LightNovelSeries.findAll({
+        attributes: [
+            [sequelize.literal(
+                "(SELECT `thumbnail` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `publication_date` DESC, `id` DESC LIMIT 1)"
+            ),
+                'thumbnail'],
+            [sequelize.literal(
+                "(SELECT `description` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `id` ASC LIMIT 1)"
+            ),
+                'description'],
+            'id',
+            'title',
+            'last_publication_date'
+        ],
+        include: [{
+            model: Category,
+
+        }],
+        order: [
+            ['last_publication_date', 'DESC'],
+            ['id', 'ASC']
+        ],
+        limit: limit + 1,
+        offset: offset
+    });
+
+    const count = await LightNovelSeries.count();
+    return {
+        list: list,
+        count: count
+    }
+}
+
+
+const getFilteredList = async ({ categoryTitles, limit, offset }) => {
+    const list = await LightNovelSeries.findAll({
+        attributes: [
+            [sequelize.literal(
+                "(SELECT `thumbnail` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `publication_date` DESC, `id` DESC LIMIT 1)"
+            ),
+                'thumbnail'],
+            [sequelize.literal(
+                "(SELECT `description` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `id` ASC LIMIT 1)"
+            ),
+                'description'],
+            'id',
+            'title',
+            'last_publication_date'
+        ],
+        include: [{
+            model: Category,
+            where: { title: categoryTitles }
+        }],
+        order: [
+            ['last_publication_date', 'DESC'],
+            ['id', 'ASC']
+        ],
+        limit: limit + 1,
+        offset: offset
+    });
+
+    const count = await LightNovelSeries.count({
+        include: [{
+            model: Category,
+            where: { title: categoryTitles }
+        }]
+    });
+    return {
+        list: list,
+        count: count
+    }
+}
+
 exports.list = async (ctx) => {
     try {
         const Op = Sequelize.Op
         const offset = parseInt(ctx.query.offset || 0, 10);
         const limit = parseInt(ctx.query.limit || 10, 10);;
+        const isDTO = ctx.query.view_type !== "detail";
 
-        const list = await LightNovelSeries.findAll({
-            attributes: [
-                [sequelize.literal(
-                    "(SELECT `thumbnail` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `publication_date` DESC, `id` DESC LIMIT 1)"
-                ),
-                    'thumbnail'],
-                [sequelize.literal(
-                    "(SELECT `description` FROM `light_novel` WHERE `light_novel`.`series_aladin_id` = `light_novel_series`.`aladin_id` ORDER BY `id` ASC LIMIT 1)"
-                ),
-                    'description'],
-                'id',
-                'title',
-                'last_publication_date'
-            ],
-            include: [
-                Category
-            ],
-            order: [
-                ['last_publication_date', 'DESC'],
-                ['id', 'ASC']
-            ],
-            limit: limit + 1,
-            offset: offset
-        });
+        var list;
+        var count;
+        if (ctx.query.categories != undefined) {
+            const categoryTitles = ctx.query.categories
+                .split(',')
+                .filter(title => {
+                    return title.length !== 0
+                })
+            if (categoryTitles.length === 0) {
+                const result = await getAllList({ limit, offset });
+                list = result.list;
+                count = result.count;
+            } else {
+                const result = await getFilteredList({ limit, offset, categoryTitles });
+                list = result.list;
+                count = result.count;
+            }
+        } else {
+            const result = await getAllList({ limit, offset });
+            list = result.list;
+            count = result.count;
+        }
 
-        const count = await LightNovelSeries.count();
         const lastPage = Math.ceil(count / limit);
         var is_last_page = true;
         const length = list.length;
         if (length == limit + 1) {
             is_last_page = false;
             list.pop()
+        }
+        if (isDTO) {
+            list = list.map(series => lightNovelSeriesDTO(series, false));
         }
         const body = {
             code: 200,
