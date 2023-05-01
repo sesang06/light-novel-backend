@@ -24,8 +24,11 @@ jobs:
       - name: Retrieve secret file
         run: |
           mkdir ./config
-          echo "${{ secrets.CONFIG_JSON }}" > ./config/config.json
-          echo "${{ secrets.FIREBASE_JSON }}" > ./config/firebase.json
+          echo $CONFIG_JSON > ./config/config.json
+          echo $FIREBASE_JSON > ./config/firebase.json
+        env:
+          CONFIG_JSON : ${{ secrets.CONFIG_JSON }}
+          FIREBASE_JSON : ${{ secrets.FIREBASE_JSON }}
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
