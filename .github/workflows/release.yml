@@ -48,4 +48,4 @@ jobs:
           script: |
             docker stop light-novel-backend || true && docker rm light-novel-backend || true
             docker pull ghcr.io/${{ github.repository_owner }}/light-novel-backend:${{ steps.tag_version.outputs.new_tag }}
-            docker run -d --name light-novel-backend ghcr.io/${{ github.repository_owner }}/light-novel-backend:${{ steps.tag_version.outputs.new_tag }}
+            docker run -p 4000:4000 -d --name light-novel-backend ghcr.io/${{ github.repository_owner }}/light-novel-backend:${{ steps.tag_version.outputs.new_tag }}
